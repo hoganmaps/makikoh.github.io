@@ -1,1029 +1,165 @@
 <html>
-<head>
-	
-	<title>city of Cupertino</title>
+    <head>
 
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	
-	
+        <title>City of Cupertino</title>
+
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
- <!-- Load leaflet from CDN-->	
-	<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-	
-	
-<!-- Load Esri Leaflet from CDN-->
-	<script src="https://unpkg.com/esri-leaflet@2.0.6"></script>
-    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder.css">
-    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.1"></script>
+        <!-- Library CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+        <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder.css">
+        <link rel="stylesheet" href="bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="vendor/L.Icon.Pulse.css">
 
-<!-- Load bootstrap from bootstrap folder-->
-<link rel="stylesheet" href="bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="bootstrap/bootstrap-3.3.7-dist/css/bootstrap.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="style/layout.css">
 
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>	
+        <!-- Load GIS layers-->
+        <script src="cu_GISdata/cu_bound.js"></script>
+        <script src="cu_GISdata/parks2.js"></script>
+        <script src="cu_GISdata/schedule.js"></script>
+    </head>
+    <body>
+        <div class="modal fade" id="disclaimerModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Disclaimer</h4>
+            </div>
+            <div class="modal-body">
+                <p>The City of Cupertino does not guarantee the accuracy, adequacy, completeness or usefulness of any information.  The City does not warrant the positional or thematic accuracy of the GIS data.  The GIS data and cartographic digital files are not legal representations of the depicted data.  Information shown on these maps is derived from public records that are constantly undergoing change.  Under no circumstances shall GIS mapping be used for final design purposes.  While every effor has been made to ensure the content, sequence, accuracy, timelines or completeness of meterials presented within thses pages, the City of Cupertino assumes no responsibility for errors or omissions, and explicitly disclaims any representations and warranties, including, without limitation, the implied warranties of merchantability and fitness for a particular purpose.  In orde to proceed, please indicate you understand the disclaimer by clicking on the button below</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+            </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+        <!--<div id="map"></div>-->
 
-<!-- Load Pulse Icon-->
-<script src="L.Icon.Pulse.js"></script>
-<link rel="stylesheet" href="L.Icon.Pulse.css">
-	
-<!-- Load GIS layers-->
-<script src="cu_GISdata/cu_bound.js"></script>
-<script src="cu_GISdata/parks2.js"></script>
-<script src="cu_GISdata/schedule.js"></script>
+        <!--<div id="box">
+        <button  class="btn-minimize" ><i class="glyphicon glyphicon-triangle-top"></i></button>
 
-<style>
-#header {
-    background-color:  #999999;  
-	font:  fantasy; 
-    color:  #FFFFFF;
-       
-}
-h1 {  font-size:  26px;  font:"Courier New", Courier, monospace;   padding-left:5px; background-color:#FFFFFF}  
-
-
-#container{  
-    background-color: #FFFFFF;    z-index: 1000;  width: 280px; overflow-y: auto; height: 100%;  }
-#map { height: 95%;   width: 95%;}
-
-
-
-#box { position: absolute;  
-    background-color: #FFFFFF;  border-style: ridge;    z-index: 1000;   width: 300px; overflow-y: auto; overflow-x:hidden;  
-	
-	}
-.info {
-    padding: 6px 8px;
-    font: 14px/16px Arial, Helvetica, sans-serif;
-    background: white;
-    background: rgba(255,255,255,0.8);
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    border-radius: 5px;
-}
-.info h4 {
-    margin: 0 0 5px;
-    color: #777;
-}
-#footer {
-    background-color: #999999;
-    color:  #999999;
-    clear:both;
-    text-align:center;
-    padding:5px; 
-	margin-bottom: 15px;
-}
-li:hover{
-    color: #0000FF;
-}
-li[disabled]:hover{
-   color:#000000;
-}
-
-li{ margin-left:10 px;
-    cursor: pointer; 
-    cursor: hand;}
-	
-ul{
-    
-    overflow-y: scroll;
-}
-.panel-group{overflow-y: scroll; height: 600px;
-}
-.panel-heading{border: solid; border-width:thin;
- 
-}
-.panel-heading .accordion-toggle:after {
-    /* symbol for "opening" panels */
-    font-family: 'Glyphicons Halflings';  /* essential for enabling glyphicon */
-    content: "\e114";    /* ad;just as needed, taken from bootstrap.css */
-    float: right;        /* adjust as needed */
-    color: grey;         /* adjust as needed */
-	
-	
-}
-.panel-heading .accordion-toggle.collapsed:after {
-    /* symbol for "collapsed" panels */
-    content: "\e080";    /* adjust as needed, taken from bootstrap.css */
-} 
-.css-icon {
-
- 
-}
-
-
-
-
-#modalContainer {
-    background-color:rgba(0, 0, 0, 0.3);
-    position:absolute;
-    width:100%;
-    height:100%;
-    top:0px;
-    left:0px;
-    z-index:10000;
-    background-image:url(tp.png); /* required by MSIE to prevent actions on lower z-index elements */
-}
-
-#alertBox {
-    position: absolute;
-    width:300px;
-    min-height:350px;
-    margin-top:50px;
-    border:1px solid #666;
-    background-color:#fff;
-    background-repeat:no-repeat;
-    background-position:20px 30px;
-}
-
-#modalContainer > #alertBox {
-    position:fixed;
-}
-
-#alertBox h1 {
-    margin:0;
-    font:bold 0.9em verdana,arial;
-    background-color: #336600;
-    color:#FFF;
-    border-bottom:1px solid #000;
-    padding:2px 0 2px 5px;
-}
-
-#alertBox p {
-    font:0.7em verdana,arial;
-    height:50px;
-    padding-left:3px;
-    margin-left:10px;
-}
-
-#alertBox #closeBtn {
-    display:block;
-    position:  absolute;
-	right: 0;
-	bottom: 0;
-    margin:5px auto;
-    padding:7px;
-    border:0 none;
-    width:70px;
-    font:0.7em verdana,arial;
-    text-transform:uppercase;
-    text-align:center;
-    color:#FFF;
-    background-color:#357EBD;
-    border-radius: 3px;
-    text-decoration:none;
-}
-
-/* unrelated styles */
-
-#mContainer {
-    position:relative;
-    width:600px;
-    margin:auto;
-    padding:5px;
-    border-top:2px solid #000;
-    border-bottom:2px solid #000;
-    font:0.7em verdana,arial;
-}
-
-h1,h2 {
-    margin:0;
-    padding:4px;
-    font:bold 1.5em verdana;
-    border-bottom:1px solid #000;
-}
-
-code {
-    font-size:1.2em;
-    color:#069;
-}
-
-#credits {
-    position:relative;
-    margin:25px auto 0px auto;
-    width:350px; 
-    font:0.7em verdana;
-    border-top:1px solid #000;
-    border-bottom:1px solid #000;
-    height:90px;
-    padding-top:4px;
-}
-
-#credits img {
-    float:left;
-    margin:5px 10px 5px 0px;
-    border:1px solid #000000;
-    width:80px;
-    height:79px;
-}
-
-.important {
-    background-color:#F5FCC8;
-    padding:2px;
-}
-
-code span {
-    color:green;
-}
-
-.btn-minimize {
-    width: 50px;
-    height: 20px;
-    background-color: white;
-	border: 1px solid #60A2E4;
-	}
-.btn-minimize.btn-plus {
-    background-color: #60A2E4;
-	width: 300px;
-    height: 15px;
-	float:left;
-	margin-right:5px;
-	 overflow: hidden;
-	
-}
-</style>
-</head>
-
-<body>
-
-
-<div id="map" >
-
-<!-- side panel-->
-<div id="box">
-<!-- button for side panel open and close-->
-<button  class="btn-minimize" ><i class="glyphicon glyphicon-triangle-top"></i></button>
-
-<!-- container contains side panel-->
-<div id="container">
-              <div><center><img src="IconImg/cupertinoLogo.png" ></img></center> </div>
-              <div><center><a href="http://www.cupertino.org/" target="_blank" class="btn btn-default">City of Cupertino </a>
-              <a href="http://gis.cupertino.opendata.arcgis.com/" target="_blank" class="btn btn-default">GIS Portal </a>
-              </div>
-
-<!-- panel group is layer group-->
-<div class="panel-group">
-    <div class="panel panel-default" >
-      <div class="panel-heading" >
-        <h5 class="panel-title">
-          <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#cu_event" onClick="showCuEvent()" ><span class="glyphicon glyphicon-calendar"></span> Event</a>
-        </h5>
-      </div>
-      <div id="cu_event" class="panel-collapse collapse in">
-       <ul class="pre-scrollable" id="evlist" style="list-style-type:none;">
+        <div id="container" class="boxContainer">
+        <div class="panel-group">
+            <div class="panel panel-default" >
+            <div class="panel-heading" >
+                <h5 class="panel-title">
+                <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#cu_event" onClick="showCuEvent()" ><span class="glyphicon glyphicon-calendar"></span> Event</a>
+                </h5>
+            </div>
+            <div id="cu_event" class="panel-collapse collapse in">
+            <ul class="pre-scrollable" id="evlist" style="list-style-type:none;">
+                
+                
+                </ul>
+            </div>
+            
+            <div class="panel-heading">
+                <h5 class="panel-title">
+                <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#collapse1" onClick="showParks()"><span class="glyphicon glyphicon-tree-conifer"></span> Parks and Recreations</a>
+                </h5></div>
+            
+            <div id="collapse1" class="panel-collapse collapse">
+            <select name="activity" id="activity" onChange="actselect()" style="position: right">
+            <option value="all" selected="selected">All</option>
+            <option value="BASEBALL">Baseball Field</option>
+            <option value="basketball">Basketball Court</option>
+            <option value="bbq">BBQ pit</option>
+            <option value="soccer">Soccer</option>
+            <option value="tennis">Tennis Court</option>
+            </select>
+            <ul class="pre-scrollable" id="itemlist" style="list-style-type:none">
+            
+                <li></li>
+                </ul>
+                
+                </div>
+                <div class="panel-heading">
+                <h5 class="panel-title">
+                <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#collapse2" onClick="showGabage()"><span class="glyphicon glyphicon-trash"></span> Gabage Schedule</a>
+                </h5>
+            </div>
+                <div id="collapse2" class="panel-collapse collapse">
+                <ul class="list-group">
+                <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="mon"><span class="glyphicon glyphicon-stop" style="color:#9966ff"></span> Monday</li>
+                <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="tue"><span class="glyphicon glyphicon-stop" style="color:#3366ff"></span> Tuesday</li>
+                <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="wed"><span class="glyphicon glyphicon-stop" style="color:#00cc99"></span> Wednesday</li>
+                <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="thur"><span class="glyphicon glyphicon-stop" style="color:#ff9933"></span> Thursday</li>
+                    <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="fri"><span class="glyphicon glyphicon-stop" style="color:#ffff4d"></span> Friday</li>
+                </ul>
+                </div>
         
-        
-		</ul>
-      </div>
-     
-      <div class="panel-heading">
-        <h5 class="panel-title">
-          <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#collapse1" onClick="showParks()"><span class="glyphicon glyphicon-tree-conifer"></span> Parks and Recreations</a>
-        </h5></div>
-      
-      <div id="collapse1" class="panel-collapse collapse">
-      <select name="activity" id="activity" onChange="actselect()" style="position: right">
-       <option value="all" selected="selected">All</option>
-       <option value="BASEBALL">Baseball Field</option>
-       <option value="basketball">Basketball Court</option>
-       <option value="bbq">BBQ pit</option>
-       <option value="soccer">Soccer</option>
-       <option value="tennis">Tennis Court</option>
-      </select>
-      <ul class="pre-scrollable" id="itemlist" style="list-style-type:none">
-      
-          <li></li>
-          </ul>
-        
+
         </div>
-        <div class="panel-heading">
-        <h5 class="panel-title">
-          <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#collapse2" onClick="showGabage()"><span class="glyphicon glyphicon-trash"></span> Gabage Schedule</a>
-        </h5>
-      </div>
-        <div id="collapse2" class="panel-collapse collapse">
-        <ul class="list-group">
-          <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="mon"><span class="glyphicon glyphicon-stop" style="color:#9966ff"></span> Monday</li>
-          <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="tue"><span class="glyphicon glyphicon-stop" style="color:#3366ff"></span> Tuesday</li>
-          <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="wed"><span class="glyphicon glyphicon-stop" style="color:#00cc99"></span> Wednesday</li>
-           <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="thur"><span class="glyphicon glyphicon-stop" style="color:#ff9933"></span> Thursday</li>
-            <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="fri"><span class="glyphicon glyphicon-stop" style="color:#ffff4d"></span> Friday</li>
-          </ul>
-           </div>
- 
+        </div>
+        </div>-->
+        <div class="wrapper">
+            <div class="row row-offcanvas row-offcanvas-left" id="mainContent">
+                <!-- sidebar -->
+                <div class="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
+                    <center>
+                        <img src="IconImg/cupertinoLogo.png" ></img>
+                    </center>
+                    <!--<div>-->
+                    <center>
+                        <a href="http://www.cupertino.org/" target="_blank" class="btn btn-default">City of Cupertino </a>
+                        <a href="http://gis.cupertino.opendata.arcgis.com/" target="_blank" class="btn btn-default">GIS Portal </a>
+                    </center>
+                    <!--</div>-->
+                <!--</div>-->
 
-</div>
-</div>
-</div>
+                    <!--<ul class="nav" id="menu">
+                        <li><a href="#"><i class="fa fa-list-alt"></i> <span class="collapse in hidden-xs">Link 1</span></a></li>
+                        <li><a href="#"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Stories</span></a></li>
+                        <li><a href="#"><i class="fa fa-paperclip"></i> <span class="collapse in hidden-xs">Saved</span></a></li>
+                        <li><a href="#"><i class="fa fa-refresh"></i> <span class="collapse in hidden-xs">Refresh</span></a></li>
+                        <li>
+                            <a href="#" data-target="#item1" data-toggle="collapse"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Menu <span class="caret"></span></span></a>
+                            <ul class="nav nav-stacked collapse left-submenu" id="item1">
+                                <li><a href="google.com">View One</a></li>
+                                <li><a href="gmail.com">View Two</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#" data-target="#item2" data-toggle="collapse"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Menu <span class="caret"></span></span></a>
+                            <ul class="nav nav-stacked collapse" id="item2">
+                                <li><a href="#">View One</a></li>
+                                <li><a href="#">View Two</a></li>
+                                <li><a href="#">View Three</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#"><i class="glyphicon glyphicon-list-alt"></i> <span class="collapse in hidden-xs">Link</span></a></li>
+                    </ul>-->
+                </div>
+                <!-- /sidebar -->
 
-<script>
+                <!-- main right col -->
+                <div class="column col-sm-9 col-xs-11"  id="mainContent">
 
-	
-    var map = L.map('map',{zoomControl:false}).setView([37.32212,-122.045],15);
-	
-	new L.Control.Zoom({ position: 'topright' }).addTo(map);
-	
+                </div>
+                <!-- /main -->
+                <div id="main">
+                <!--<div class="column col-sm-9 col-xs-11" id="main">-->
+                    <a href="#" data-toggle="offcanvas" id="sideNavToggle"><i class="glyphicon glyphicon-menu-hamburger"></i></a>
+                </div>
+            </div>
+        </div>
+        <div id="map"></div>
+    </body>
+    <!-- Load Third Party Libraries Libraries -->
+    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@2.0.6"></script>
+    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.1"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="vendor/L.Icon.Pulse.js"></script>
 
-var imagery=L.esri.basemapLayer('Imagery');
-var streets=L.esri.basemapLayer('Streets');
-var topography=L.esri.basemapLayer('Topographic').addTo(map);
-var openstreetmap=L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-	attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
-});
-
-var baseMaps={
-"Streets": streets,
-"Imagery": imagery,
-"Topographic": topography,
-"OpenStreetMap": openstreetmap
-};
-
-
-   
- new L.control.layers(baseMaps).addTo(map);
-
-//Cupertino City boundary
-var boundStyle={
-   "color": "black" ,
-   "weight":3,
-   "fillOpacity": 0
-   };
-
-var cu_bound=L.geoJson(cpbd,{style: boundStyle}).addTo(map);
-
-//Disclaimer box: error box was customized to use for disclaimer box
-var ALERT_TITLE = "Disclaimer";
-var ALERT_BUTTON_TEXT = "Ok";
-
-if(document.getElementById) {
-    window.alert = function(txt) {
-        createCustomAlert(txt);
-    }
-}
-
-function createCustomAlert(txt) {
-    d = document;
-
-    if(d.getElementById("modalContainer")) return;
-
-    mObj = d.getElementsByTagName("body")[0].appendChild(d.createElement("div"));
-    mObj.id = "modalContainer";
-    mObj.style.height = d.documentElement.scrollHeight + "px";
-
-    alertObj = mObj.appendChild(d.createElement("div"));
-    alertObj.id = "alertBox";
-    if(d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
-    alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth)/2 + "px";
-    alertObj.style.visiblity="visible";
-
-    h1 = alertObj.appendChild(d.createElement("h1"));
-    h1.appendChild(d.createTextNode(ALERT_TITLE));
-
-    msg = alertObj.appendChild(d.createElement("p"));
+    <!-- Load Custom JS -->
+    <script src="js/map.js"></script>
+    <script src="js/app.js"></script>
     
-    msg.innerHTML = txt;
-
-    btn = alertObj.appendChild(d.createElement("a"));
-    btn.id = "closeBtn";
-    btn.appendChild(d.createTextNode(ALERT_BUTTON_TEXT));
-    btn.href = "#";
-    btn.focus();
-    btn.onclick = function() { removeCustomAlert();return false; }
-
-    alertObj.style.display = "block";
-
-}
-
-function removeCustomAlert() {
-    document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
-}
-alert("The City of Cupertino does not guarantee the accuracy, adequacy, completeness or usefulness of any information.  The City does not warrant the positional or thematic accuracy of the GIS data.  The GIS data and cartographic digital files are not legal representations of the depicted data.  Information shown on these maps is derived from public records that are constantly undergoing change.  Under no circumstances shall GIS mapping be used for final design purposes.  While every effor has been made to ensure the content, sequence, accuracy, timelines or completeness of meterials presented within thses pages, the City of Cupertino assumes no responsibility for errors or omissions, and explicitly disclaims any representations and warranties, including, without limitation, the implied warranties of merchantability and fitness for a particular purpose.  In orde to proceed, please indicate you understand the disclaimer by clicking on the button below");
-
-
-//Geocoder from Esri
-var searchControl = L.esri.Geocoding.geosearch({position:'topright'}).addTo(map);
-var results = L.layerGroup().addTo(map);
-
-  searchControl.on('results', function(data){
-    results.clearLayers();
-    for (var i = data.results.length - 1; i >= 0; i--) {
-      results.addLayer(L.marker(data.results[i].latlng).bindPopup("Here!!"));
-    }
-  });
- 
- 
- //prevent sidepanel's move by scrolling
- var div=L.DomUtil.get('box');
- if(!L.Browser.touch){
-    L.DomEvent.disableClickPropagation(div);
-	L.DomEvent.on(div,'drag',L.DomEvent.stopPropagation);
-	}else{
-	L.DomEvent.on(div,'drag',L.DomEvent.stopPropagation);
-	}
- 
- 
-//circle is kind of a selection tool. when an item on the side panel is clicked, circle is placed on the map
-var circle;
-	
-var circleMarkerOption={
-color: 'orange',
-    fillColor: 'yellow',
-    fillOpacity: 0.5,
-    radius: 25
-};
-
-var cu_list=[];
-var xy_list=[];
-var cu_xy=[];
-
-
- var animeIcon=new L.icon.pulse({
-	
-	iconSize: [15,15]
-	});
-	
-	
-var cuEvent;
-var polyline;
-
-var cuev={"type":"FeatureCollection","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"features":[{"type":"Feature","properties":{"Id":2,"Title":"Safe Routes 2 School","Detail":"A strategy session for creating safer routes to school","phone":"N/A","url":"http://www.cupertino.org/?page=18&recordid=7799&returnURL=%2findex.aspx","eDate":"2/8/2017","eTime":"3:00 pm - 5:00 pm","showmap":true},"geometry":{"type":"Point","coordinates":[-122.028225,37.318381]}},{"type":"Feature","properties":{"Id":3,"Title":"Big Bunny 5K","Detail":"Family Fun Run!","phone":"N/A","url":"http://www.bigbunny5k.com/","eDate":"4/15/2017","eTime":"7:15 am - 11:15 am","showmap":true},"geometry":{"type":"Point","coordinates":[-122.029213,37.318386]}},{"type":"Feature","properties":{"Id":1,"Title":"Farmer's Market","Detail":"","phone":"N/A","url":"http://www.wcfma.org/","eDate":"Every Sunday","eTime":"9:30 am - 1:00 pm","showmap":true},"geometry":{"type":"Point","coordinates":[-122.0492,37.32361]}}]}
-
-
-var latlngs = [
-    [37.31837089427468, -122.02921830159892],
-    [37.316225011339355, -122.02921171257506],
-    [37.31620652921515, -122.0288008429234],
-	[37.316055066322356,-122.02807378853969],
-	[37.316066838003266,-122.02717094983416],[37.315363721834174,-122.02714911956294],[37.31537954140263,-122.02318638050764],[37.32069056596608,-122.02320505892098],[37.32067583407001,-122.01974896452289],[37.319757402428486,-122.01978253496321],[37.31973706472365,-122.0181326168978],[37.31844334606085,-122.01860640485901],[37.31831221142091,-122.01768570791069],[37.32153021021485,-122.0163776830859],[37.32155438973507,-122.01543024585654],[37.317379026066895,-122.0170174261578],[37.31639011328493,-122.01743023576498],[37.31616903395912,-122.01747052796593],[37.31593336185735,-122.01725676669851],[37.31571827267894,-122.01683444888864],[37.315487979334755,-122.0166655804489],[37.31512261781523,-122.01679997014477],[37.31485077167983,-122.01707805980485],[37.31462476433991,-122.01749888092287],[37.31441405749428,-122.01765879517988],[37.314049468091355,-122.01773348777918],[37.31382693869619,-122.01788569682161],[37.31342684747652,-122.01839999492842],[37.31540769949465,-122.0223958346141],[37.3154705384487,-122.02260608979184],[37.315469903021466,-122.02311358805876],[37.31529111981873,-122.02310994466607],[37.31527931714382,-122.02722202880358],[37.31598223877557,-122.02725878267533],[37.31598092541927,-122.02827378606834],[37.31609045585983,-122.02855963759403],[37.31615622480667,-122.02900132780502],[37.31615809409507,-122.02931483208414],[37.31836992036855,-122.02929291865219]
-];
-var polyline = L.polyline(latlngs, {color: 'red', weight: 5, opacity:0.6, 
-                lineJoin: 'round'}).addTo(map);
-polyline.bindPopup("Big Bunny 5K course").openPopup();
-
-
-var evName=[];
-var evDate=[];
-var evTime=[];
-var ev_xy=[];
-var difference;
-cuEvent=L.geoJson(cuev,{
-
-
-	pointToLayer: function (feature, latlng){
-	                             return L.marker(latlng,{icon:animeIcon});
-	
-	}
-	
-	,filter: function(feature,layer){var today=new Date();
-																  var evdate=new Date(feature.properties.eDate);
-																  difference=Math.floor((evdate-today)/(1000*60*60*24))+1;
-																  if(isNaN(difference)==true)
-																  {difference="";}
-																  else if(difference==0)
-																  {difference="Today!!"}
-																  else if(difference<0)
-																  {return feature.properties.showmap=false}
-																  else
-																  {difference='in '+difference+' Day(s)';}
-																  return feature.properties.showmap;}
-	
-	
-	,onEachFeature: function(feature, layer)
-		                                                         {
-															layer.bindTooltip('<b>'+feature.properties.Title+'</br>'+feature.properties.eDate+'<br><small>'+difference+'</br>click icon for info</small>',{permanent: true, direction: 'top'});
-															layer.bindPopup('<b>'+feature.properties.Title+'</b></br>'+feature.properties.Detail+'<br>'+feature.properties.eDate+'</br>'+feature.properties.eTime+'</br>Tel: '+feature.properties.phone+'</br><a href='+feature.properties.url+' target="_blank">more info</a>');
-		                                                      
-					   evName.push(feature.properties.Title);
-															evDate.push(feature.properties.eDate);
-															evTime.push(feature.properties.eTime);
-		                                                    ev_xy.push(feature.geometry.coordinates);
-										               }
-													  
-												   }).addTo(map);
-												   
-
-var evnode=[];
-var evtextnode=[];	
-
-
-
-var eNode = document.getElementById("evlist");
-
-		    for(var i=0; i<evName.length;i++)
-			
-            {
-			
-			evnode[i]=document.createElement("LI"); 
- 
-             setAttributes(evnode[i],{"id":ev_xy[i],"onClick":"selectEV(this)" });
-             
-             evtextnode[i] = document.createTextNode(evName[i]+": "+evDate[i]); 
-             evnode[i].appendChild(evtextnode[i]);
-		   
-		     
-              eNode.appendChild(evnode[i]);
-		
-	      }	
-		   
-	 
-	
-function selectEV(a)
-{
-
-var ev_coord=a.id;
-
-var earry=[];
-earry = ev_coord.split(",");
-
-var ex = parseFloat(earry[0]);
-var ey = parseFloat(earry[1]);
-
-
-map.setView([ey,ex],18);
-}
-	
-
-												   
-function showCuEvent(){
-map.setView([37.32212,-122.045],14);
-  if(!map.hasLayer(cuEvent))
-  {	
-  cuEvent.addTo(map);	
-	polyline.addTo(map);	
-	}
-	else
-	{map.removeLayer(cuEvent);
-     map.removeLayer(polyline);
-	}
-	}
-	
-//Park Layer start here
-//pIcon is for park(tree) icon 
-var parkID=[];
-var coords=[];
-var name_coor=[];
-
-var mynode=[];
-var textnode=[];
-
-var pIcon=new L.icon({
-	iconUrl: 'IconImg/tree.png',
-	iconSize: [20,20]
-	});
-var geojsonMarkerOptions={
-    icon: pIcon	
-	};
-
-//getting park points data from GeoJson in park.js	
-var pk=L.geoJson(park, {
-
-
-	pointToLayer: function (feature, latlng){
-	return L.marker(latlng,geojsonMarkerOptions);
-	
-	}
-
-	,onEachFeature: function (feature, layer) {
-	    layer.options.title=feature.properties.Name;
-        layer.bindPopup('<b>'+feature.properties.Name+'</b><hr>Open: '+feature.properties.OPERHOURS+'<hr><li>Restroom: '+feature.properties.RESTROOM+'</li><li>Play Ground: '+feature.properties.PLAYGROUND+'</li><li>Golf: '+feature.properties.GOLF+'</li><li>Soccer: '+feature.properties.SOCCER+'</li><li>Baseball: '+feature.properties.BASEBALL+'</li><li>Basketball: '+feature.properties.BASKETBALL+'</li><li>Tennis Court: '+feature.properties.TENNISCOURT+'</li><li>BBQ Pit: '+feature.properties.BBQPIT+'</li><li>Bocceball: '+feature.properties.BOCCEBALL+'</li><li>Volleyball: '+feature.properties.VOLLEYBALL+'</li><a href='+feature.properties.PARKURL+' target="_blank">more info</a>');
-		
-		layer.on('click', function(e){ 
-		
-		
-		map.setView(e.latlng, 16);
-		if(map.hasLayer(circle))
-{map.removeLayer(circle);}
-
-    
-
-circle = L.circleMarker(e.latlng, circleMarkerOption).addTo(map);
-
-})
-
-//creating list for park name, park coordintes, and  name+coordinate   
-    	parkID.push(feature.properties.Name);
-		coords.push(feature.geometry.coordinates);
-		
-		name_coor.push(parkID,coords);
-    }});
-
-
-function showParks(){
-map.setView([37.32212,-122.045],13);
-
-//if browser is IE, hide dropdown selection (meaning show only "All") because dropdown is not properly working
-if (navigator.appName == 'Microsoft Internet Explorer' ||  !!(navigator.userAgent.match(/Trident/) || navigator.userAgent.match(/rv 11/)) || (typeof $.browser !== "undefined" && $.browser.msie == 1))
-{
-
- $("#activity option[value='BASEBALL']").remove();
- $("#activity option[value='basketball']").remove();
-  $("#activity option[value='bbq']").remove();
-   $("#activity option[value='soccer']").remove();
-    $("#activity option[value='tennis']").remove();
-  
-}
-//user click. if park layer is not on the map, make sure no park list in side panel
-  if(!map.hasLayer(pk))
-  { var mNode = document.getElementById("itemlist");
-        while (mNode.firstChild) {
-    mNode.removeChild(mNode.firstChild);
-	}
-	
-	pk.addTo(map);
-	   
-		makeList4sidePanel(parkID,"itemlist");//insert park list in side panel	
-	}
-	else //user clidk. if park layer is on the map, remove park layer and park list from side panel
-	
-	{
-	if (map.hasLayer(pk))
-	{map.removeLayer(pk);
-	mynode=[];
-    textnode=[];
-	}
-	map.removeLayer(circle);
-	
-	
-	var mNode = document.getElementById("itemlist");
-    while (mNode.firstChild) {
-    mNode.removeChild(mNode.firstChild);
-	
-	
-    }
-}
-}
-
-
-//dropdown --activity selection
-function actselect(){
-    
-	if(map.hasLayer(circle))
-	{map.removeLayer(circle);}
-	map.setView([37.32212,-122.045],13);
-    if (document.getElementById("activity").value=="BASEBALL")
-	{ //alert(selectedString);
-	activityselect("BASEBALL");
-	}
-	else if(document.getElementById("activity").value=="basketball")
-	{
-	activityselect("BASKETBALL");
-	}
-	else if(document.getElementById("activity").value=="bbq")
-	{
-	activityselect("BBQPIT");
-	}
-	else if(document.getElementById("activity").value=="soccer")
-	{
-	activityselect("SOCCER");
-	}
-	else if(document.getElementById("activity").value=="tennis")//(selectedString=="basketball")
-	{
-	activityselect("TENNISCOURT");
-	}
-	else {
-	activityselect("ALL");
-	}
-}
-
-//this function is filtering Park geojson
-function activityselect(acttype)
-{parkID=[];//reset parkID list
-
-if(map.hasLayer(pk))
-{map.removeLayer(pk);
-}
-
-pk=L.geoJson(park, {
-
-
-	pointToLayer: function (feature, latlng){
-	return L.marker(latlng,geojsonMarkerOptions);
-	
-	}
-,
-	filter: function(feature, layer) {
-	if(acttype=="BASEBALL")
-	   {var a=feature.properties.BASEBALL;
-	        if(a=="No")
-	            {	           
-	             a=false;
-	             }
-		}
-            // return a;
-			 
-	else if(acttype=="BASKETBALL")
-	     { a=feature.properties.BASKETBALL;	
-	       if(a=="No")
-	            {	           
-	             a=false;
-	             }
-		  }
-    else if(acttype=="BBQPIT")
-	     { a=feature.properties.BBQPIT;	
-	       if(a=="No")
-	            {	           
-	             a=false;
-	             }
-		  }
-	 else if(acttype=="SOCCER")
-	     { a=feature.properties.SOCCER;	
-	       if(a=="No")
-	            {	           
-	             a=false;
-	             }
-		  }
-	 else if(acttype=="TENNISCOURT")
-	     { a=feature.properties.TENNISCOURT;	
-	       if(a=="No")
-	            {	           
-	             a=false;
-	             }
-		  }
-	else  { a=feature.geometry.type;	
-	       if(a=="Point")
-	            {	           
-	             a=true;
-	             }
-		  }
-             return a; 
-			 
-			 
-  } 
-
-  
-	
-	,onEachFeature: function (feature, layer) {
-	    layer.options.title=feature.properties.Name;
-        layer.bindPopup('<b>'+feature.properties.Name+'</b><hr>Open: '+feature.properties.OPERHOURS+'<hr><li>Restroom: '+feature.properties.RESTROOM+'</li><li>Play Ground: '+feature.properties.PLAYGROUND+'</li><li>Golf: '+feature.properties.GOLF+'</li><li>Soccer: '+feature.properties.SOCCER+'</li><li>Baseball: '+feature.properties.BASEBALL+'</li><li>Basketball: '+feature.properties.BASKETBALL+'</li><li>Tennis Court: '+feature.properties.TENNISCOURT+'</li><li>BBQ Pit: '+feature.properties.BBQPIT+'</li><li>Bocceball: '+feature.properties.BOCCEBALL+'</li><li>Volleyball: '+feature.properties.VOLLEYBALL+'</li><a href='+feature.properties.PARKURL+' target="_blank">more info</a>');
-;
-	layer.on('click', function(e){ 
-		
-		
-		map.setView(e.latlng, 16);
-		if(map.hasLayer(circle))
-{map.removeLayer(circle);}
-
-    
-
-circle = L.circleMarker(e.latlng, circleMarkerOption
-   ).addTo(map);
-
-})
-        
-    	parkID.push(feature.properties.Name);
-		coords.push(feature.geometry.coordinates);
-		
-		
-    }}).addTo(map);
-
-
-
-
-var mNode = document.getElementById("itemlist");
-while(mNode.hasChildNodes())
-	{mNode.removeChild(mNode.firstChild);}
-
-		    for(var i=0; i<parkID.length;i++)
-			
-            {
-			
-			mynode[i]=document.createElement("LI"); 
- 
-             setAttributes(mynode[i],{"id":parkID[i],"onClick":"selectPK(this)" });
-             var num=Number(i)+1;
-		    
-             textnode[i] = document.createTextNode(""+num+"."+" "+parkID[i]); 
-              mynode[i].appendChild(textnode[i]);
-		   
-		      mNode=document.getElementById("itemlist");
-              mNode.appendChild(mynode[i]);
-		 
-	      }	
-		   
-	 
-	}
-	
-function getIndexAry(arry,n)
-{
-
-for(var i=0;i,arry.length;i++)
-  {if (arry[0][i]==n)
-  
-   return arry[1][i];
-   }
- }
-
-function selectPK(ele){	
-
-var myid=ele.id;
-
-var xy=getIndexAry(name_coor, myid).toString();
-
-var arr = xy.split(",");
-var x = parseFloat(arr[0]);
-var y = parseFloat(arr[1]);
-
-
-if(map.hasLayer(circle))
-{map.removeLayer(circle);}
-
-    
-map.setView([y,x],16);
-circle = L.circleMarker([y,x], circleMarkerOption).addTo(map);
-
-}
-
-
-function setAttributes(el, attrs) {
-  for(var key in attrs) {
-    el.setAttribute(key, attrs[key]);
-  }
-}
-
-function makeList4sidePanel(mylist,eleID){
-
-  for(var i in mylist){
- 
- mynode=[];
- textnode=[];
- mynode[i]=document.createElement("LI"); 
- 
-  setAttributes(mynode[i],{"id":mylist[i],"onClick":"selectPK(this)" });
-  var num=Number(i)+1;
-  textnode[i] = document.createTextNode(""+num+"."+" "+mylist[i]); 
-  mynode[i].appendChild(textnode[i]);
-  document.getElementById(eleID).appendChild(mynode[i]);
-}
-
-
-}
-
-
-
-
-//garbage layer starts here
-var garbage; 
-
-function showGabage(){
-map.setView([37.32212,-122.045],13);
-  if(!map.hasLayer(garbage))
-  {
-		
-		garbage=L.geoJson(gbgsc, {
-        style: style,
-        onEachFeature: onEachFeature
-         }).addTo(map);
-		
-	}
-	else
-	{map.removeLayer(garbage);
-	
-	}
-	}
-
-function getColor(d) {
-    if (d =="Monday"){return '#9966ff';} 
-    else if (d =="Tuesday" ) {return '#3366ff';}
-    else if (d =="Wednesday"){return '#00cc99';}
-    else if (d =="Thursday" ){return '#ff9933';} 
-     else {return '#ffff4d';} 
-           
-}
-function style(feature) {
-    return {
-        fillColor: getColor(feature.properties.Day),
-        weight: 2,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.3
-    };
-}
-
-
-function highliteFeature(e) {
-    var layer = e.target;
-    layer.bindPopup("<b>"+layer.feature.properties.Day+"</b>").openPopup();
-    layer.setStyle({
-        weight: 5,
-        color: '#666',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-
-    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        layer.bringToFront();
-    }
-	
-}
-
-//mouseover function!! when item(day) in side panel is mouseovered, highlight layer cooresponding to day
-function highlightFeature(da) {
-var gdate=da.id;
-
-var layer_num=[];
-
-var layer=[];
- 
-if (gdate=='mon')
-{layer_num=[8,11];
-}
-
-else if (gdate=='tue')
-{layer_num=[7,10,12];
-}
-
-else if (gdate=='wed')
-{layer_num=[1,6];}
-else if(gdate=='thur')
-{layer_num=[2,4,5,15];}
-else
-{layer_num=[3,9,13,14];
-}
- 
-
-    for (var i=0; i<layer_num.length; i++)
-	{
-	
-	 layer[i]=garbage.getLayer(layer_num[i]);
-	 layer[i].setStyle({
-        weight: 5,
-        color: 'yellow',
-        dashArray: '',
-        fillOpacity: 0.7
-    });
-		
-         }
-		 if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-       layer[i].bringToFront();
-	}
-	}
-
-//when mouseout, reset hightlight     
-function resetHighlight(dat) {
- var gdate=dat.id;
-
-var layer_num=[];
-//alert(gdate);
-var layer=[];
- 
-if (gdate=='mon')
-{layer_num=[8,11];
-}
-
-else if (gdate=='tue')
-{layer_num=[7,10,12];
-}
-
-else if (gdate=='wed')
-{layer_num=[1,6];}
-else if(gdate=='thur')
-{layer_num=[2,4,5,15];}
-else
-{layer_num=[3,9,13,14];
-}
- 
-
-    for (var i=0; i<layer_num.length; i++)
-	{
-	
-	 layer[i]=garbage.getLayer(layer_num[i]); 
-    garbage.resetStyle(layer[i]);
-	}
-	}
- 
-function resetHighlite(e) {
-    garbage.resetStyle(e.target);
-	
-}
-
-function zoomToFeature(e) {
-    map.fitBounds(e.target.getBounds());
-}
-function onEachFeature(feature, layer) {
-layer._leaflet_id = feature.properties.OBJECTID;     
-    layer.on({
-        mouseover: highliteFeature,
-       mouseout: resetHighlite,
-        click: zoomToFeature
-		
-    });
-	
-}
-
-//side panel open and close 
-$(".btn-minimize").click(function(){
-    $(this).toggleClass('btn-plus');
-	$(this).find('i').toggleClass('glyphicon-triangle-top').toggleClass('glyphicon-triangle-bottom');
-
-    $("#container").slideToggle();
-  });
-
-</script>
-
-
-
-</body>
 </html>
