@@ -1,118 +1,167 @@
 <html>
-    <head>
 
-        <title>City of Cupertino</title>
+<head>
 
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>City of Cupertino</title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 
-        <!-- Library CSS -->
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
-        <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder.css">
-        <link rel="stylesheet" href="bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
-        <link rel="stylesheet" href="vendor/L.Icon.Pulse.css">
+    <!-- Library CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder.css">
+    <link rel="stylesheet" href="bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="vendor/L.Icon.Pulse.css">
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="style/layout.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style/layout.css">
 
-        <!-- Load GIS layers-->
-        <script src="cu_GISdata/cu_bound.js"></script>
-        <script src="cu_GISdata/parks2.js"></script>
-        <script src="cu_GISdata/schedule.js"></script>
-    </head>
-    <body>
-        <div class="modal fade" id="disclaimerModal" tabindex="-1" role="dialog">
+    <!-- Load GIS layers-->
+    <script src="cu_GISdata/cu_bound.js"></script>
+    <script src="cu_GISdata/parks2.js"></script>
+    <script src="cu_GISdata/schedule.js"></script>
+</head>
+
+<body>
+
+    <!-- modal start-->
+    <div class="modal fade" id="disclaimerModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">Disclaimer</h4>
-            </div>
-            <div class="modal-body">
-                <p>The City of Cupertino does not guarantee the accuracy, adequacy, completeness or usefulness of any information.  The City does not warrant the positional or thematic accuracy of the GIS data.  The GIS data and cartographic digital files are not legal representations of the depicted data.  Information shown on these maps is derived from public records that are constantly undergoing change.  Under no circumstances shall GIS mapping be used for final design purposes.  While every effor has been made to ensure the content, sequence, accuracy, timelines or completeness of meterials presented within thses pages, the City of Cupertino assumes no responsibility for errors or omissions, and explicitly disclaims any representations and warranties, including, without limitation, the implied warranties of merchantability and fitness for a particular purpose.  In orde to proceed, please indicate you understand the disclaimer by clicking on the button below</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
-            </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-        </div><!-- /.modal -->
-        <!--<div id="map"></div>-->
-
-        <!--<div id="box">
-        <button  class="btn-minimize" ><i class="glyphicon glyphicon-triangle-top"></i></button>
-
-        <div id="container" class="boxContainer">
-        <div class="panel-group">
-            <div class="panel panel-default" >
-            <div class="panel-heading" >
-                <h5 class="panel-title">
-                <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#cu_event" onClick="showCuEvent()" ><span class="glyphicon glyphicon-calendar"></span> Event</a>
-                </h5>
-            </div>
-            <div id="cu_event" class="panel-collapse collapse in">
-            <ul class="pre-scrollable" id="evlist" style="list-style-type:none;">
-                
-                
-                </ul>
-            </div>
-            
-            <div class="panel-heading">
-                <h5 class="panel-title">
-                <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#collapse1" onClick="showParks()"><span class="glyphicon glyphicon-tree-conifer"></span> Parks and Recreations</a>
-                </h5></div>
-            
-            <div id="collapse1" class="panel-collapse collapse">
-            <select name="activity" id="activity" onChange="actselect()" style="position: right">
-            <option value="all" selected="selected">All</option>
-            <option value="BASEBALL">Baseball Field</option>
-            <option value="basketball">Basketball Court</option>
-            <option value="bbq">BBQ pit</option>
-            <option value="soccer">Soccer</option>
-            <option value="tennis">Tennis Court</option>
-            </select>
-            <ul class="pre-scrollable" id="itemlist" style="list-style-type:none">
-            
-                <li></li>
-                </ul>
-                
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Disclaimer</h4>
                 </div>
-                <div class="panel-heading">
-                <h5 class="panel-title">
-                <li class="accordion-toggle collapsed" style="list-style: none;" data-toggle="collapse" href="#collapse2" onClick="showGabage()"><span class="glyphicon glyphicon-trash"></span> Gabage Schedule</a>
-                </h5>
-            </div>
-                <div id="collapse2" class="panel-collapse collapse">
-                <ul class="list-group">
-                <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="mon"><span class="glyphicon glyphicon-stop" style="color:#9966ff"></span> Monday</li>
-                <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="tue"><span class="glyphicon glyphicon-stop" style="color:#3366ff"></span> Tuesday</li>
-                <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="wed"><span class="glyphicon glyphicon-stop" style="color:#00cc99"></span> Wednesday</li>
-                <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="thur"><span class="glyphicon glyphicon-stop" style="color:#ff9933"></span> Thursday</li>
-                    <li class="list-group-item" onMouseOver="highlightFeature(this)" onMouseOut="resetHighlight(this)" id="fri"><span class="glyphicon glyphicon-stop" style="color:#ffff4d"></span> Friday</li>
-                </ul>
+                <div class="modal-body">
+                    <p>The City of Cupertino does not guarantee the accuracy, adequacy, completeness or usefulness of any information.
+                        The City does not warrant the positional or thematic accuracy of the GIS data. The GIS data and cartographic
+                        digital files are not legal representations of the depicted data. Information shown on these maps
+                        is derived from public records that are constantly undergoing change. Under no circumstances shall
+                        GIS mapping be used for final design purposes. While every effor has been made to ensure the content,
+                        sequence, accuracy, timelines or completeness of meterials presented within thses pages, the City
+                        of Cupertino assumes no responsibility for errors or omissions, and explicitly disclaims any representations
+                        and warranties, including, without limitation, the implied warranties of merchantability and fitness
+                        for a particular purpose. In orde to proceed, please indicate you understand the disclaimer by clicking
+                        on the button below</p>
                 </div>
-        
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal -->
 
-        </div>
-        </div>
-        </div>-->
-        <div class="wrapper">
-            <div class="row row-offcanvas row-offcanvas-left" id="mainContent">
-                <!-- sidebar -->
-                <div class="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
-                    <center>
-                        <img src="IconImg/cupertinoLogo.png" ></img>
-                    </center>
-                    <!--<div>-->
-                    <center>
-                        <a href="http://www.cupertino.org/" target="_blank" class="btn btn-default">City of Cupertino </a>
-                        <a href="http://gis.cupertino.opendata.arcgis.com/" target="_blank" class="btn btn-default">GIS Portal </a>
-                    </center>
-                    <!--</div>-->
+    <div class="wrapper">
+        <div class="row row-offcanvas row-offcanvas-left" id="mainContent">
+            <!-- sidebar -->
+            <div class="column col-sm-3 col-xs-1 sidebar-offcanvas" id="sidebar">
+                <center>
+                    <img src="IconImg/cupertinoLogo.png"></img>
+                </center>
+                <!--<div>-->
+                <center>
+                    <a href="http://www.cupertino.org/" target="_blank" class="btn btn-default">City of Cupertino </a>
+                    <a href="http://gis.cupertino.opendata.arcgis.com/" target="_blank" class="btn btn-default">GIS Portal </a>
+                </center>
+                <div class="panel-group" id="accordion">
+
+                    <!-- Events accordion -->
+                    <div class="panel panel-default" id="eventsGroup">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><span class="glyphicon glyphicon-tree-conifer">
+                            </span>Events</a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <table class="table" id="eventsTable">
+                                    <!-- autogenerated stuff will go here -->
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Parks and Recreation accordion -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span class="glyphicon glyphicon-calendar">
+                            </span>Parks and Recreation</a>
+                            </h4>
+                        </div>
+                        <div id="collapseTwo" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <span class="glyphicon glyphicon-pencil text-primary"></span><a href="http://www.jquery2dotnet.com">Articles</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="glyphicon glyphicon-flash text-success"></span><a href="http://www.jquery2dotnet.com">News</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="glyphicon glyphicon-file text-info"></span><a href="http://www.jquery2dotnet.com">Newsletters</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="glyphicon glyphicon-comment text-success"></span><a href="http://www.jquery2dotnet.com">Comments</a>
+                                            <span class="badge">42</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Garbage accordion -->
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"><span class="glyphicon glyphicon-trash">
+                            </span>Garbage Schedule</a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <table class="table">
+                                    <tr>
+                                        <td>
+                                            <span class="glyphicon glyphicon-pencil text-primary"></span><a href="http://www.jquery2dotnet.com">Articles</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="glyphicon glyphicon-flash text-success"></span><a href="http://www.jquery2dotnet.com">News</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="glyphicon glyphicon-file text-info"></span><a href="http://www.jquery2dotnet.com">Newsletters</a>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <span class="glyphicon glyphicon-comment text-success"></span><a href="http://www.jquery2dotnet.com">Comments</a>
+                                            <span class="badge">42</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--</div>-->
                 <!--</div>-->
 
-                    <!--<ul class="nav" id="menu">
+                <!--<ul class="nav" id="menu">
                         <li><a href="#"><i class="fa fa-list-alt"></i> <span class="collapse in hidden-xs">Link 1</span></a></li>
                         <li><a href="#"><i class="fa fa-list"></i> <span class="collapse in hidden-xs">Stories</span></a></li>
                         <li><a href="#"><i class="fa fa-paperclip"></i> <span class="collapse in hidden-xs">Saved</span></a></li>
@@ -134,32 +183,32 @@
                         </li>
                         <li><a href="#"><i class="glyphicon glyphicon-list-alt"></i> <span class="collapse in hidden-xs">Link</span></a></li>
                     </ul>-->
-                </div>
-                <!-- /sidebar -->
+            </div>
+            <!-- /sidebar -->
 
-                <!-- main right col -->
-                <div class="column col-sm-9 col-xs-11"  id="mainContent">
+            <!-- main right col -->
+            <div class="column col-sm-9 col-xs-11" id="mainContent">
 
-                </div>
-                <!-- /main -->
-                <div id="main">
+            </div>
+            <!-- /main -->
+            <div id="main">
                 <!--<div class="column col-sm-9 col-xs-11" id="main">-->
-                    <a href="#" data-toggle="offcanvas" id="sideNavToggle"><i class="glyphicon glyphicon-menu-hamburger"></i></a>
-                </div>
+                <a href="#" data-toggle="offcanvas" id="sideNavToggle"><i class="glyphicon glyphicon-menu-hamburger"></i></a>
             </div>
         </div>
-        <div id="map"></div>
-    </body>
-    <!-- Load Third Party Libraries Libraries -->
-    <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/esri-leaflet@2.0.6"></script>
-    <script src="https://unpkg.com/esri-leaflet-geocoder@2.2.1"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="vendor/L.Icon.Pulse.js"></script>
+    </div>
+    <div id="map"></div>
+</body>
+<!-- Load Third Party Libraries Libraries -->
+<script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<script src="https://unpkg.com/esri-leaflet@2.0.6"></script>
+<script src="https://unpkg.com/esri-leaflet-geocoder@2.2.1"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="vendor/L.Icon.Pulse.js"></script>
 
-    <!-- Load Custom JS -->
-    <script src="js/map.js"></script>
-    <script src="js/app.js"></script>
-    
+<!-- Load Custom JS -->
+<script src="js/map.js"></script>
+<script src="js/app.js"></script>
+
 </html>
