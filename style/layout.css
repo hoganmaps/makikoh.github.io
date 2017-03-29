@@ -111,7 +111,7 @@ html, body {
 
 #sideNavToggle {
     background-color: #ffffff;
-    padding: 15px;
+    padding: 15px 5px 15px 15px;
     pointer-events: all !important;
 }
 
@@ -196,3 +196,9 @@ html, body {
 
 
 
+
+
+#listOfParks {
+    max-height: 400px;
+    overflow-y: scroll;
+}

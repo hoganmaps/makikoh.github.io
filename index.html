@@ -11,7 +11,7 @@
     <!-- Library CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
     <link rel="stylesheet" href="https://unpkg.com/esri-leaflet-geocoder@2.2.1/dist/esri-leaflet-geocoder.css">
-    <link rel="stylesheet" href="bootstrap/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="vendor/L.Icon.Pulse.css">
 
     <!-- Custom CSS -->
@@ -26,7 +26,7 @@
 <body>
 
     <!-- modal start-->
-    <div class="modal fade" id="disclaimerModal" tabindex="-1" role="dialog">
+    <!--<div class="modal fade" id="disclaimerModal" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -50,7 +50,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>-->
     <!-- /.modal -->
 
     <div class="wrapper">
@@ -65,13 +65,13 @@
                     <a href="http://www.cupertino.org/" target="_blank" class="btn btn-default">City of Cupertino </a>
                     <a href="http://gis.cupertino.opendata.arcgis.com/" target="_blank" class="btn btn-default">GIS Portal </a>
                 </center>
-                <div class="panel-group" id="accordion">
+                <div class="panel-group">
 
-                    <!-- Events accordion -->
+                    <!-- Events menu item -->
                     <div class="panel panel-default" id="eventsGroup">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><span class="glyphicon glyphicon-tree-conifer">
+                                <a data-toggle="collapse" href="#collapseOne" onclick="showEvents()"><span class="glyphicon glyphicon-tree-conifer">
                             </span>Events</a>
                             </h4>
                         </div>
@@ -84,75 +84,82 @@
                         </div>
                     </div>
 
-                    <!-- Parks and Recreation accordion -->
+                    <!-- Parks and Recreation menu item -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo"><span class="glyphicon glyphicon-calendar">
+                                <a data-toggle="collapse" href="#collapseTwo" onclick="showParks()"><span class="glyphicon glyphicon-calendar">
                             </span>Parks and Recreation</a>
                             </h4>
                         </div>
                         <div id="collapseTwo" class="panel-collapse collapse">
                             <div class="panel-body">
-                                <table class="table">
-                                    <tr>
-                                        <td>
-                                            <span class="glyphicon glyphicon-pencil text-primary"></span><a href="http://www.jquery2dotnet.com">Articles</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="glyphicon glyphicon-flash text-success"></span><a href="http://www.jquery2dotnet.com">News</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="glyphicon glyphicon-file text-info"></span><a href="http://www.jquery2dotnet.com">Newsletters</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span class="glyphicon glyphicon-comment text-success"></span><a href="http://www.jquery2dotnet.com">Comments</a>
-                                            <span class="badge">42</span>
-                                        </td>
-                                    </tr>
-                                </table>
+                                <select name="activity" id="activity" class="form-control">
+                                    <option value="ALL" selected="selected">All</option>
+                                    <option value="BASEBALL">Baseball Field</option>
+                                    <option value="BASKETBALL">Basketball Court</option>
+                                    <option value="BBQPIT">BBQ pit</option>
+                                    <option value="SOCCER">Soccer</option>
+                                    <option value="TENNISCOURT">Tennis Court</option>
+                                </select>
+                                <!--<ul class="pre-scrollable" id="itemlist" style="list-style-type:none">-->
+                                <div class="table-responsive" id="listOfParks">
+                                    <table class="table table-striped table-condensed">
+                                        <tbody id="itemlist"></tbody>
+                                        <!-- list of parks appended here from the parks2 file-->
+                                    </table>
+                                </div>
+                                    <!-- list of parks appended here from the parks2 file-->
+                                <!--</ul>-->
+
                             </div>
                         </div>
                     </div>
 
-                    <!-- Garbage accordion -->
+                    <!-- Garbage menu item -->
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree"><span class="glyphicon glyphicon-trash">
-                            </span>Garbage Schedule</a>
+                                <span data-toggle="collapse" onclick="showGarbage()" href="#collapseThree">
+                                    <span class="glyphicon glyphicon-trash"></span>Garbage
+                                Schedule
+                                </span>
                             </h4>
                         </div>
                         <div id="collapseThree" class="panel-collapse collapse">
                             <div class="panel-body">
                                 <table class="table">
-                                    <tr>
+
+                                    <tr onMouseOver="highlightFeature('Monday')" onMouseOut="resetHighlight()" id="mon">
                                         <td>
-                                            <span class="glyphicon glyphicon-pencil text-primary"></span><a href="http://www.jquery2dotnet.com">Articles</a>
+                                            <span style="color:#9966f" class="glyphicon glyphicon-stop text-primary"></span>Monday
                                         </td>
                                     </tr>
-                                    <tr>
+
+                                    <tr onMouseOver="highlightFeature('Tuesday')" onMouseOut="resetHighlight()" id="tue">
                                         <td>
-                                            <span class="glyphicon glyphicon-flash text-success"></span><a href="http://www.jquery2dotnet.com">News</a>
+                                            <span style="color:#3366ff" class="glyphicon glyphicon-stop text-primary"></span>Tuesday
                                         </td>
                                     </tr>
-                                    <tr>
+
+                                    <tr onMouseOver="highlightFeature('Wednesday')" onMouseOut="resetHighlight()" id="wed">
                                         <td>
-                                            <span class="glyphicon glyphicon-file text-info"></span><a href="http://www.jquery2dotnet.com">Newsletters</a>
+                                            <span style="color:#00cc99" class="glyphicon glyphicon-stop text-primary"></span>Wednesday
                                         </td>
                                     </tr>
-                                    <tr>
+
+                                    <tr onMouseOver="highlightFeature('Thursday')" onMouseOut="resetHighlight()" id="thur">
                                         <td>
-                                            <span class="glyphicon glyphicon-comment text-success"></span><a href="http://www.jquery2dotnet.com">Comments</a>
-                                            <span class="badge">42</span>
+                                            <span style="color:#ff9933" class="glyphicon glyphicon-stop text-primary"></span>Thursday
                                         </td>
                                     </tr>
+
+                                    <tr onMouseOver="highlightFeature('Friday')" onMouseOut="resetHighlight()" id="fri">
+                                        <td>
+                                            <span style="color:#ffff4d" class="glyphicon glyphicon-stop text-primary"></span>Friday
+                                        </td>
+                                    </tr>
+
                                 </table>
                             </div>
                         </div>
