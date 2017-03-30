@@ -563,6 +563,7 @@ function highlightFeature(da) {
             // }
         }
     }).addTo(map);
+    highlightedLayer.bindPopup("<b>" + da + "</b>").openPopup();
 }
 
 //when mouseout, reset hightlight     
