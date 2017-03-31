@@ -70,12 +70,12 @@ var animeIcon = new L.icon.pulse({
 var cuEvent;
 var polyline;
 
-var cuev = { "type": "FeatureCollection", "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } }, "features": [{ "type": "Feature", "properties": { "Id": 2, "Title": "Safe Routes 2 School", "Detail": "A strategy session for creating safer routes to school", "phone": "N/A", "url": "http://www.cupertino.org/?page=18&recordid=7799&returnURL=%2findex.aspx", "eDate": "2/8/2017", "eTime": "3:00 pm - 5:00 pm", "showmap": true }, "geometry": { "type": "Point", "coordinates": [-122.028225, 37.318381] } }, { "type": "Feature", "properties": { "Id": 3, "Title": "Big Bunny 5K", "Detail": "Family Fun Run!", "phone": "N/A", "url": "http://www.bigbunny5k.com/", "eDate": "4/15/2017", "eTime": "7:15 am - 11:15 am", "showmap": true }, "geometry": { "type": "Point", "coordinates": [-122.029213, 37.318386] } }, { "type": "Feature", "properties": { "Id": 1, "Title": "Farmer's Market", "Detail": "", "phone": "N/A", "url": "http://www.wcfma.org/", "eDate": "Every Sunday", "eTime": "9:30 am - 1:00 pm", "showmap": true }, "geometry": { "type": "Point", "coordinates": [-122.0492, 37.32361] } }] }
+var cuev = { "type": "FeatureCollection", "crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } }, "features": [{ "type": "Feature", "properties": { "Id": 2, "Title": "Safe Routes 2 School", "Detail": "A strategy session for creating safer routes to school", "phone": "N/A", "url": "http://www.cupertino.org/?page=18&recordid=7799&returnURL=%2findex.aspx", "eDate": "2/8/2017", "eTime": "3:00 pm - 5:00 pm", "showmap": true }, "geometry": { "type": "Point", "coordinates": [-122.028225, 37.318381] } }, { "type": "Feature", "properties": { "Id": 3, "Title": "Big Bunny 5K", "Detail": "Family Fun Run!", "phone": "N/A", "url": "http://www.bigbunny5k.com/", "eDate": "4/15/2017", "eTime": "7:15 am - 11:15 am", "showmap": true }, "geometry": { "type": "Point", "coordinates": [-122.029213, 37.318386] } }, { "type": "Feature", "properties": { "Id": 1, "Title": "Farmer's Market", "Detail": "", "phone": "N/A", "url": "http://www.wcfma.org/", "eDate": "Every Sunday", "eTime": "9:30 am - 1:00 pm", "showmap": true }, "geometry": { "type": "Point", "coordinates": [-122.0492, 37.32361] } }] };
 
 // create menu items for CueV
 for (let eventIndex in cuev.features) {
     if (isTimeRelevant(cuev.features[eventIndex].properties.eDate)) {
-        $('#eventsTable').append('<tr><td><small class="indented" onclick="firePopup(' + cuev.features[eventIndex].properties.Id + ')">' + cuev.features[eventIndex].properties.Title + ', ' + cuev.features[eventIndex].properties.eDate + '</small></td></tr>')
+        $('#eventsTable').append('<tr><td><small class="indented" onclick="firePopup(' + cuev.features[eventIndex].properties.Id + ')">' + cuev.features[eventIndex].properties.Title + ', ' + cuev.features[eventIndex].properties.eDate + '</small></td></tr>');
 
     }
 }
@@ -100,7 +100,7 @@ function showEvents() {
                 return L.marker(latlng, { icon: animeIcon });
             },
             filter: function (feature, layer) {
-                return isTimeRelevant(feature.properties.eDate)
+                return isTimeRelevant(feature.properties.eDate);
             },
             onEachFeature: function (feature, layer) {
                 layer._leaflet_id = feature.properties.Id;
@@ -122,14 +122,14 @@ function showEvents() {
     // polyline toggle
     if(!map.hasLayer(polyLine)){
         polyLine = L.polyline(bigBunnyPath, {
-            color: 'red', 
-            weight: 5, 
+            color: 'red',
+            weight: 5,
             opacity: 0.6,
             lineJoin: 'round'
         }).addTo(map);
     }
     else {
-        map.removeLayer(polyLine)
+        map.removeLayer(polyLine);
     }
 
 }
@@ -139,14 +139,14 @@ function isTimeRelevant(dataEDate) {
     var today = new Date();
     var evdate = new Date(dataEDate);
     difference = Math.floor((evdate - today) / (1000 * 60 * 60 * 24)) + 1;
-    if (isNaN(difference) == true) {
+    if (isNaN(difference) === true) {
         difference = "";
     }
-    else if (difference == 0) {
-        difference = "Today!!"
+    else if (difference === 0) {
+        difference = "Today!!";
     }
     else if (difference < 0) {
-        return false
+        return false;
     }
     else {
         difference = 'in ' + difference + ' Day(s)';
@@ -159,7 +159,7 @@ function firePopup(id) {
 
     //get target layer by it's id
     var layer = cuEvent.getLayer(intId);
-    //fire event 'click' on target layer 
+    //fire event 'click' on target layer
     layer.fireEvent('click');
     // console.log(layer)
 }
@@ -182,7 +182,7 @@ var evtextnode = [];
 // }
 
 //Park Layer start here
-//pIcon is for park(tree) icon 
+//pIcon is for park(tree) icon
 var parkID = [];
 var coords = [];
 var name_coor = [];
@@ -198,7 +198,7 @@ var geojsonMarkerOptions = {
     icon: pIcon
 };
 
-//getting park points data from GeoJson in park.js	
+//getting park points data from GeoJson in park.js
 var pk;
 
 
@@ -210,47 +210,46 @@ function showParks(){
             pointToLayer: function (feature, latlng) {
                 return L.marker(latlng, geojsonMarkerOptions);
 
-            }
-
-            , onEachFeature: function (feature, layer) {
+            },
+            onEachFeature: function (feature, layer) {
                 layer.options.title = feature.properties.Name;
                 // layer.bindPopup('<b>' + feature.properties.Name + '</b><hr>Open: ' + feature.properties.OPERHOURS + '<hr><li>Restroom: ' + feature.properties.RESTROOM + '</li><li>Play Ground: ' + feature.properties.PLAYGROUND + '</li><li>Golf: ' + feature.properties.GOLF + '</li><li>Soccer: ' + feature.properties.SOCCER + '</li><li>Baseball: ' + feature.properties.BASEBALL + '</li><li>Basketball: ' + feature.properties.BASKETBALL + '</li><li>Tennis Court: ' + feature.properties.TENNISCOURT + '</li><li>BBQ Pit: ' + feature.properties.BBQPIT + '</li><li>Bocceball: ' + feature.properties.BOCCEBALL + '</li><li>Volleyball: ' + feature.properties.VOLLEYBALL + '</li><a href=' + feature.properties.PARKURL + ' target="_blank">more info</a>');
             var parkFeatures = '';
             if(feature.properties.RESTROOM === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Bathrooms</li>'
+                parkFeatures = parkFeatures + '<li>Bathrooms</li>';
             }
             if(feature.properties.PLAYGROUND === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Playground</li>'
+                parkFeatures = parkFeatures + '<li>Playground</li>';
             }
             if(feature.properties.GOLF === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Golf</li>'
+                parkFeatures = parkFeatures + '<li>Golf</li>';
             }
             if(feature.properties.SOCCER === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Soccer</li>'
+                parkFeatures = parkFeatures + '<li>Soccer</li>';
             }
             if(feature.properties.BASEBALL === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Baseball</li>'
+                parkFeatures = parkFeatures + '<li>Baseball</li>';
             }
             if(feature.properties.BASKETBALL === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Basketball</li>'
+                parkFeatures = parkFeatures + '<li>Basketball</li>';
             }
             if(feature.properties.TENNISCOURT === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Tennis Court</li>'
+                parkFeatures = parkFeatures + '<li>Tennis Court</li>';
             }
             if(feature.properties.BBQPIT === 'Yes'){
-                parkFeatures = parkFeatures + '<li>BBQ Pit</li>'
+                parkFeatures = parkFeatures + '<li>BBQ Pit</li>';
             }
             if(feature.properties.BOCCEBALL === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Bocceball</li>'
+                parkFeatures = parkFeatures + '<li>Bocceball</li>';
             }
             if(feature.properties.VOLLEYBALL === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Volleyball</li>'
+                parkFeatures = parkFeatures + '<li>Volleyball</li>';
             }
             layer.options.title = feature.properties.Name;
             layer.bindPopup('<h5>' + feature.properties.Name + '</h5>' +
                 '<b>Open:</b> ' + feature.properties.OPERHOURS + '</br>' +
                 '<ul style="list-style: circle;">' + parkFeatures + '</ul>' +
-                '<a href=' + feature.properties.PARKURL + 
+                '<a href=' + feature.properties.PARKURL +
                 ' target="_blank">more info</a>'
             );
 
@@ -266,9 +265,9 @@ function showParks(){
 
                     circle = L.circleMarker(e.latlng, circleMarkerOption).addTo(map);
 
-                })
+                });
 
-                //creating list for park name, park coordintes, and  name+coordinate   
+                //creating list for park name, park coordintes, and  name+coordinate
                 parkID.push(feature.properties.Name);
                 coords.push(feature.geometry.coordinates);
 
@@ -277,44 +276,43 @@ function showParks(){
         }).addTo(map);
     }
     else {
-        map.removeLayer(pk)
+        map.removeLayer(pk);
     }
 }
 var parkIndex= 0;
 //this function is filtering Park geojson
 function activityselect(acttype) {
-    if (map.hasLayer(circle)){ 
-        map.removeLayer(circle); 
+    if (map.hasLayer(circle)){
+        map.removeLayer(circle);
     }
-    $('#itemlist').html('')
+    $('#itemlist').html('');
     parkID = [];//reset parkID list
 
     if (map.hasLayer(pk)) {
         map.removeLayer(pk);
     }
 
-    
+
     pk = L.geoJson(park, {
 
 
         pointToLayer: function (feature, latlng) {
             return L.marker(latlng, geojsonMarkerOptions);
+          },
 
-        }
-        ,
         filter: function (feature, layer) {
-            
+            var a;
             if (acttype == "BASEBALL") {
 
-                var a = feature.properties.BASEBALL;
+                a = feature.properties.BASEBALL;
                 if (a == "No") {
                     a = false;
                 }
                 else {
-                    $('#itemlist').append('<tr><td onClick="selectPK(this, `parkID' + parkIndex + '`)" id="' + feature.properties.Name + '">' + feature.properties.Name + '</td></tr>');
+                    $('#itemlist').append('<tr><td onClick="selectPK(this)" id="' + feature.properties.Name + '">' + feature.properties.Name + '</td></tr>');
                     parkIndex ++;
                 }
-                
+
             }
 
             else if (acttype == "BASKETBALL") {
@@ -367,50 +365,50 @@ function activityselect(acttype) {
         }, onEachFeature: function (feature, layer) {
            var parkFeatures = '';
             if(feature.properties.RESTROOM === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Bathrooms</li>'
+                parkFeatures = parkFeatures + '<li>Bathrooms</li>';
             }
             if(feature.properties.PLAYGROUND === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Playground</li>'
+                parkFeatures = parkFeatures + '<li>Playground</li>';
             }
             if(feature.properties.GOLF === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Golf</li>'
+                parkFeatures = parkFeatures + '<li>Golf</li>';
             }
             if(feature.properties.SOCCER === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Soccer</li>'
+                parkFeatures = parkFeatures + '<li>Soccer</li>';
             }
             if(feature.properties.BASEBALL === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Baseball</li>'
+                parkFeatures = parkFeatures + '<li>Baseball</li>';
             }
             if(feature.properties.BASKETBALL === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Basketball</li>'
+                parkFeatures = parkFeatures + '<li>Basketball</li>';
             }
             if(feature.properties.TENNISCOURT === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Tennis Court</li>'
+                parkFeatures = parkFeatures + '<li>Tennis Court</li>';
             }
             if(feature.properties.BBQPIT === 'Yes'){
-                parkFeatures = parkFeatures + '<li>BBQ Pit</li>'
+                parkFeatures = parkFeatures + '<li>BBQ Pit</li>';
             }
             if(feature.properties.BOCCEBALL === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Bocceball</li>'
+                parkFeatures = parkFeatures + '<li>Bocceball</li>';
             }
             if(feature.properties.VOLLEYBALL === 'Yes'){
-                parkFeatures = parkFeatures + '<li>Volleyball</li>'
+                parkFeatures = parkFeatures + '<li>Volleyball</li>';
             }
             layer.options.title = feature.properties.Name;
             layer.bindPopup('<h5>' + feature.properties.Name + '</h5>' +
                 '<b>Open:</b> ' + feature.properties.OPERHOURS + '</br>' +
                 '<ul style="list-style: circle;">' + parkFeatures + '</ul>' +
-                '<a href=' + feature.properties.PARKURL + 
+                '<a href=' + feature.properties.PARKURL +
                 ' target="_blank">more info</a>'
             );
             layer.on('click', function (e) {
-                if (map.hasLayer(circle)){ 
-                    map.removeLayer(circle); 
+                if (map.hasLayer(circle)){
+                    map.removeLayer(circle);
                 }
 
                 circle = L.circleMarker(e.latlng, circleMarkerOption).addTo(map);
 
-            })
+            });
             // console.warn('lyr\n\n', layer.id)
             // feature.properties.layerId = layer
             // coords.push(feature.geometry.coordinates);
@@ -438,16 +436,25 @@ function getIndexAry(arry, n) {
 }
 $('#activity').on('change', function(){
     activityselect(this.value);
-})
+});
 
 // var parkNumber = 1;
 
+function checkTitle(object,name) {
 
-function selectPK(ele, ind) {
-    console.warn('parkID', ind)
-    pk._layers['parkID' + ind].fire('click');
+  for (var key in object){
+    if (object[key].options.title === name) return object[key];
+
+  }
+}
+
+function selectPK(ele) {
+
+    var parkobject = checkTitle(pk._layers,ele.id);
+    parkobject.openPopup();
+    //pk._layers[parkobject._leaflet_id].fire('click');
     // console.warn(pk.getLayer(ind))
-    // pk.getLayer(ind).fire('click')
+    //pk.getLayer(ind).fire('click')
     var myid = ele.id;
 
     var xy = getIndexAry(name_coor, myid).toString();
@@ -457,8 +464,8 @@ function selectPK(ele, ind) {
     var y = parseFloat(arr[1]);
 
 
-    if (map.hasLayer(circle)){ 
-        map.removeLayer(circle); 
+    if (map.hasLayer(circle)){
+        map.removeLayer(circle);
     }
 
 
@@ -552,7 +559,7 @@ function highlightFeature(da) {
             weight: 5,
             color: 'yellow',
             dashArray: '',
-            fillOpacity: .2
+            fillOpacity: 0.2
         },
         filter: function (feature) {
             if (feature.properties.Day === da) {
@@ -566,12 +573,14 @@ function highlightFeature(da) {
     highlightedLayer.bindPopup("<b>" + da + "</b>").openPopup();
 }
 
-//when mouseout, reset hightlight     
+//when mouseout, reset hightlight
 function resetHighlight(dat) {
-    map.removeLayer(highlightedLayer)
+    map.removeLayer(highlightedLayer);
 }
 
 function resetHighlite(e) {
+    var layer = e.target;
+    layer.closePopup();
     garbage.resetStyle(e.target);
 
 }
