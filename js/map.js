@@ -257,12 +257,8 @@ function showParks(){
                 layer.on('click', function (e) {
 
 
-                    // map.setView(e.latlng, 16);
-                    if (map.hasLayer(circle))
-                    { map.removeLayer(circle); }
-
-
-
+                    map.setView(e.latlng, 16);
+                    removeCircle();
                     circle = L.circleMarker(e.latlng, circleMarkerOption).addTo(map);
 
                 });
@@ -277,8 +273,18 @@ function showParks(){
     }
     else {
         map.removeLayer(pk);
+        if (map.hasLayer(circle))
+        { map.removeLayer(circle); }
     }
 }
+
+
+function removeCircle(){
+  if (map.hasLayer(circle))
+  { map.removeLayer(circle); }
+
+}
+
 var parkIndex= 0;
 //this function is filtering Park geojson
 function activityselect(acttype) {
@@ -438,7 +444,20 @@ $('#activity').on('change', function(){
     activityselect(this.value);
 });
 
+
+// direct event
+$('.touch').on('tap', function(e) {
+  highliteFeature(e);
+});
+
+// delegated event
+$('.parent').on('tap', '.touch', function(e) {
+  console.log(this, e);
+});
+
 // var parkNumber = 1;
+
+
 
 function checkTitle(object,name) {
 
@@ -448,9 +467,11 @@ function checkTitle(object,name) {
   }
 }
 
+
 function selectPK(ele) {
 
     var parkobject = checkTitle(pk._layers,ele.id);
+    map.setView(parkobject._latlng, 16);
     parkobject.openPopup();
     //pk._layers[parkobject._leaflet_id].fire('click');
     // console.warn(pk.getLayer(ind))
@@ -506,6 +527,7 @@ function selectPK(ele) {
 var garbage;
 
 function showGarbage() {
+   removeCircle();
     if (!map.hasLayer(garbage)) {
         garbage = L.geoJson(gbgsc, {
             style: style,
@@ -538,11 +560,12 @@ function style(feature) {
 
 
 function highliteFeature(e) {
+    removeCircle();
     var layer = e.target;
     layer.bindPopup("<b>" + layer.feature.properties.Day + "</b>").openPopup();
     layer.setStyle({
         weight: 5,
-        color: '#666',
+        color: 'yellow',
         dashArray: '',
         fillOpacity: 0.7
     });
@@ -553,7 +576,7 @@ function highliteFeature(e) {
 var highlightedLayer;
 //mouseover function!! when item(day) in side panel is mouseovered, highlight layer cooresponding to day
 function highlightFeature(da) {
-
+    removeCircle();
     highlightedLayer = L.geoJSON(gbgsc, {
         style: {
             weight: 5,
