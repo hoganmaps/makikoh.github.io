@@ -5,7 +5,7 @@
     margin: 0;
 }
 
-h1 {  font-size:  26px;  font:"Courier New", Courier, monospace;   padding-left:5px; background-color:#FFFFFF}  
+h1 {  font-size:  26px;  font:"Courier New", Courier, monospace;   padding-left:5px; background-color:#FFFFFF}
 
 #sideNavButton {
     position: absolute;
@@ -13,7 +13,7 @@ h1 {  font-size:  26px;  font:"Courier New", Courier, monospace;   padding-left:
     left: 20px;
 }*/
 /*
-#container{  
+#container{
     background-color: #FFFFFF;    z-index: 1000;  width: 280px; overflow-y: auto; }*/
 /*#warningModal {
     z-index: 10000;
@@ -23,12 +23,12 @@ h1 {  font-size:  26px;  font:"Courier New", Courier, monospace;   padding-left:
 Warning Modal
 */
 
-	
+
 .modal {
   text-align: center;
 }
 
-@media screen and (min-width: 768px) { 
+@media screen and (min-width: 768px) {
   .modal:before {
     display: inline-block;
     vertical-align: middle;
@@ -45,7 +45,7 @@ Warning Modal
 
 /*remove sharp corners*/
 .modal-content {
-    border-radius: 0px; 
+    border-radius: 0px;
 }
 
 /*
@@ -88,6 +88,8 @@ html, body {
     padding-left: 0;
     float: left;
     min-height: 100%;
+		max-height: 100%;
+		overflow-y: scroll;
     pointer-events: all !important;
 }
 
@@ -125,16 +127,16 @@ html, body {
         max-height: 100%;
         overflow-y: scroll;
     }
-    
+
     #main {
         width: 1%;
         left: 0;
     }
-    
+
     #sidebar .visible-xs {
        display:inline !important;
     }
-    
+
     .row-offcanvas {
         width: auto;
         position: relative;
@@ -142,20 +144,20 @@ html, body {
        -moz-transition: all 0.4s ease-in-out;
        transition: all 0.4s ease-in-out;
     }
-    
+
     .row-offcanvas-left.active {
        left: 45%;
     }
-    
+
     .row-offcanvas-left.active .sidebar-offcanvas {
        left: -45%;
        position: absolute;
        top: 0;
        width: 45%;
     }
-} 
- 
- 
+}
+
+
 @media screen and (min-width: 768px) {
   .row-offcanvas {
     position: relative;
@@ -177,7 +179,7 @@ html, body {
     min-width:46px;
     margin-right: 0;
   }
-  
+
   #main {
     left: 0;
   }
